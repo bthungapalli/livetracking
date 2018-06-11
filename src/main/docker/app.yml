@@ -1,0 +1,12 @@
+version: '2'
+services:
+    simstracking-app:
+        image: simstracking
+        environment:
+            - SPRING_PROFILES_ACTIVE=prod,swagger
+            - SPRING_DATASOURCE_URL=jdbc:mysql://simstracking-mysql:3306/simstracking?useUnicode=true&characterEncoding=utf8&useSSL=false
+            - JHIPSTER_SLEEP=10 # gives time for the database to boot before the application
+    simstracking-mysql:
+        extends:
+            file: mysql.yml
+            service: simstracking-mysql
