@@ -1,5 +1,6 @@
 package com.sims.tracking.web.rest.errors;
 
+import org.junit.Ignore;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -13,6 +14,7 @@ import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
+@Ignore
 @RestController
 public class ExceptionTranslatorTestController {
 

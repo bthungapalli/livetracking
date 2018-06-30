@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <property name="now" value="now()" dbms="h2"/>
+
+    <property name="now" value="now()" dbms="mysql"/>
+    <property name="autoIncrement" value="true"/>
+
+    <property name="floatType" value="float4" dbms="postgresql, h2"/>
+    <property name="floatType" value="float" dbms="mysql, oracle, mssql"/>
+
+    <!--
+        Added the entity Tracking.
+    -->
+    <changeSet id="20180611103848-1" author="jhipster">
+        <createTable tableName="tbl_track">
+            <column name="id" type="bigint" autoIncrement="${autoIncrement}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="mco_id" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="customer_id" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="clong" type="double">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="clat" type="double">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="mlat" type="double">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="mlong" type="double">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="is_live" type="bit">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="created_at" type="timestamp">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="cname" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="mname" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="request_id" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+
+            <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
+        </createTable>
+        <dropDefaultValue tableName="tbl_track" columnName="created_at" columnDataType="datetime"/>
+        
+    </changeSet>
+    <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->
+</databaseChangeLog>

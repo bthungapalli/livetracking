@@ -2,6 +2,7 @@ package com.sims.tracking.web.rest.errors;
 
 import com.sims.tracking.SimstrackingApp;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @see ExceptionTranslator
  */
+@Ignore
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SimstrackingApp.class)
 public class ExceptionTranslatorIntTest {

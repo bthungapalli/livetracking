@@ -3,6 +3,7 @@ package com.sims.tracking.web.rest;
 import io.github.jhipster.config.JHipsterProperties;
 import com.sims.tracking.SimstrackingApp;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -24,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @see ProfileInfoResource
  **/
+@Ignore
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SimstrackingApp.class)
 public class ProfileInfoResourceIntTest {

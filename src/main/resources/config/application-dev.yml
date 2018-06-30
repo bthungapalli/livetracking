@@ -32,9 +32,9 @@ spring:
         serialization.indent_output: true
     datasource:
         type: com.zaxxer.hikari.HikariDataSource
-        url: jdbc:mysql://localhost:3306/simstracking?useUnicode=true&characterEncoding=utf8&useSSL=false
+        url: jdbc:mysql://localhost:3306/sims?useUnicode=true&characterEncoding=utf8&useSSL=false
         username: root
-        password:
+        password: root123
         hikari:
             data-source-properties:
                 cachePrepStmts: true
@@ -87,7 +87,7 @@ liquibase:
 #        key-alias: simstracking
 # ===================================================================
 server:
-    port: 9006
+    port: 9001
 
 # ===================================================================
 # JHipster specific properties
@@ -132,16 +132,16 @@ jhipster:
             enabled: false
             endpoint: /prometheusMetrics
         logs: # Reports Dropwizard metrics in the logs
-            enabled: false
+            enabled: true
             report-frequency: 60 # in seconds
     logging:
         logstash: # Forward logs to logstash over a socket, used by LoggingConfiguration
-            enabled: false
-            host: localhost
+            enabled: true
+            host: 192.168.0.220
             port: 5000
             queue-size: 512
         spectator-metrics: # Reports Spectator Circuit Breaker metrics in the logs
-            enabled: false
+            enabled: true
             # edit spring.metrics.export.delay-millis to set report frequency
 
 
