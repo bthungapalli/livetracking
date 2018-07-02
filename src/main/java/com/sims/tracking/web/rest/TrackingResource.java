@@ -126,7 +126,7 @@ public class TrackingResource {
      * @param id the id of the tracking to retrieve
      * @return the ResponseEntity with status 200 (OK) and with body the tracking, or with status 404 (Not Found)
      */
-    @GetMapping("/trackings/{id}")
+    @GetMapping("/trackings/track/{id}")
     @Timed
     public ResponseEntity<Tracking> getTracking(@PathVariable Long id) {
         log.debug("REST request to get Tracking : {}", id);
@@ -159,5 +159,18 @@ public class TrackingResource {
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
     
+    
+    @PutMapping("/isLiveFalse")
+    @Timed
+    public ResponseEntity<?> updateIsLiveFalse(@Valid @RequestBody String requestId) throws URISyntaxException {
+        log.debug("REST request to update Tracking : {}", requestId);
+        if (requestId == null) {
+        	return ResponseEntity.notFound().build();
+        }
+        Tracking tracking = trackingRepository.findOne(Example.of(new Tracking().requestId(requestId)));
+        tracking.setIs_live(Boolean.FALSE);
+        trackingRepository.save(tracking);
+        return ResponseEntity.noContent().build();
+    }
     
 }
