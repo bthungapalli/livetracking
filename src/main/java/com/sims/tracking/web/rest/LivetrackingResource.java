@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -142,7 +143,8 @@ public class LivetrackingResource {
     public ResponseEntity<List<Livetracking>> getLiveTrackingsByTrackId(@PathVariable Integer id) {
         log.debug("REST request to get Tracking : {}", id);
         Example<Livetracking> livetracksByTrackId = Example.of(new Livetracking().trackId(id));
-        List<Livetracking> livetrackings = livetrackingRepository.findAll(livetracksByTrackId);
+        Sort sort = new Sort(Sort.Direction.DESC , "created_at");
+        List<Livetracking> livetrackings = livetrackingRepository.findAll(livetracksByTrackId,sort);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(livetrackings));
     }
     
@@ -152,7 +154,8 @@ public class LivetrackingResource {
     public ResponseEntity<List<Livetracking>> getLiveTrackingsByTrackId(@PathVariable String id) {
         log.debug("REST request to get Tracking : {}", id);
         Example<Livetracking> livetracksByRequestId = Example.of(new Livetracking().requestId(id));
-        List<Livetracking> livetrackings = livetrackingRepository.findAll(livetracksByRequestId);
+        Sort sort = new Sort(Sort.Direction.DESC , "created_at");
+        List<Livetracking> livetrackings = livetrackingRepository.findAll(livetracksByRequestId,sort);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(livetrackings));
     }
 }
