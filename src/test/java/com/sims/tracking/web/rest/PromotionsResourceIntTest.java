@@ -7,7 +7,6 @@ import com.sims.tracking.repository.PromotionsRepository;
 import com.sims.tracking.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
@@ -37,7 +36,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @see PromotionsResource
  */
-@Ignore
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SimstrackingApp.class)
 public class PromotionsResourceIntTest {
@@ -53,6 +51,9 @@ public class PromotionsResourceIntTest {
 
     private static final Instant DEFAULT_UPDATED_AT = Instant.ofEpochMilli(0L);
     private static final Instant UPDATED_UPDATED_AT = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+
+    private static final Boolean DEFAULT_STATUS = false;
+    private static final Boolean UPDATED_STATUS = true;
 
     @Autowired
     private PromotionsRepository promotionsRepository;
@@ -95,7 +96,8 @@ public class PromotionsResourceIntTest {
             .promotion(DEFAULT_PROMOTION)
             .createdBy(DEFAULT_CREATED_BY)
             .createdAt(DEFAULT_CREATED_AT)
-            .updatedAt(DEFAULT_UPDATED_AT);
+            .updatedAt(DEFAULT_UPDATED_AT)
+            .status(DEFAULT_STATUS);
         return promotions;
     }
 
@@ -123,6 +125,7 @@ public class PromotionsResourceIntTest {
         assertThat(testPromotions.getCreatedBy()).isEqualTo(DEFAULT_CREATED_BY);
         assertThat(testPromotions.getCreatedAt()).isEqualTo(DEFAULT_CREATED_AT);
         assertThat(testPromotions.getUpdatedAt()).isEqualTo(DEFAULT_UPDATED_AT);
+        assertThat(testPromotions.isStatus()).isEqualTo(DEFAULT_STATUS);
     }
 
     @Test
@@ -182,6 +185,24 @@ public class PromotionsResourceIntTest {
 
     @Test
     @Transactional
+    public void checkStatusIsRequired() throws Exception {
+        int databaseSizeBeforeTest = promotionsRepository.findAll().size();
+        // set the field null
+        promotions.setStatus(null);
+
+        // Create the Promotions, which fails.
+
+        restPromotionsMockMvc.perform(post("/api/promotions")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(promotions)))
+            .andExpect(status().isBadRequest());
+
+        List<Promotions> promotionsList = promotionsRepository.findAll();
+        assertThat(promotionsList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     public void getAllPromotions() throws Exception {
         // Initialize the database
         promotionsRepository.saveAndFlush(promotions);
@@ -194,7 +215,8 @@ public class PromotionsResourceIntTest {
             .andExpect(jsonPath("$.[*].promotion").value(hasItem(DEFAULT_PROMOTION.toString())))
             .andExpect(jsonPath("$.[*].createdBy").value(hasItem(DEFAULT_CREATED_BY.toString())))
             .andExpect(jsonPath("$.[*].createdAt").value(hasItem(DEFAULT_CREATED_AT.toString())))
-            .andExpect(jsonPath("$.[*].updatedAt").value(hasItem(DEFAULT_UPDATED_AT.toString())));
+            .andExpect(jsonPath("$.[*].updatedAt").value(hasItem(DEFAULT_UPDATED_AT.toString())))
+            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.booleanValue())));
     }
 
     @Test
@@ -211,7 +233,8 @@ public class PromotionsResourceIntTest {
             .andExpect(jsonPath("$.promotion").value(DEFAULT_PROMOTION.toString()))
             .andExpect(jsonPath("$.createdBy").value(DEFAULT_CREATED_BY.toString()))
             .andExpect(jsonPath("$.createdAt").value(DEFAULT_CREATED_AT.toString()))
-            .andExpect(jsonPath("$.updatedAt").value(DEFAULT_UPDATED_AT.toString()));
+            .andExpect(jsonPath("$.updatedAt").value(DEFAULT_UPDATED_AT.toString()))
+            .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.booleanValue()));
     }
 
     @Test
@@ -237,7 +260,8 @@ public class PromotionsResourceIntTest {
             .promotion(UPDATED_PROMOTION)
             .createdBy(UPDATED_CREATED_BY)
             .createdAt(UPDATED_CREATED_AT)
-            .updatedAt(UPDATED_UPDATED_AT);
+            .updatedAt(UPDATED_UPDATED_AT)
+            .status(UPDATED_STATUS);
 
         restPromotionsMockMvc.perform(put("/api/promotions")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -252,6 +276,7 @@ public class PromotionsResourceIntTest {
         assertThat(testPromotions.getCreatedBy()).isEqualTo(UPDATED_CREATED_BY);
         assertThat(testPromotions.getCreatedAt()).isEqualTo(UPDATED_CREATED_AT);
         assertThat(testPromotions.getUpdatedAt()).isEqualTo(UPDATED_UPDATED_AT);
+        assertThat(testPromotions.isStatus()).isEqualTo(UPDATED_STATUS);
     }
 
     @Test

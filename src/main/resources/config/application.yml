@@ -61,7 +61,7 @@ spring:
         basename: i18n/messages
     mvc:
         favicon:
-            enabled: false
+            enabled: true
     thymeleaf:
         mode: XHTML
 security:

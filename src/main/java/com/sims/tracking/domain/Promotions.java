@@ -35,6 +35,9 @@ public class Promotions implements Serializable {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
+    @Column(name = "status")
+    private Boolean status;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
@@ -95,6 +98,19 @@ public class Promotions implements Serializable {
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public Boolean isStatus() {
+        return status;
+    }
+
+    public Promotions status(Boolean status) {
+        this.status = status;
+        return this;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
@@ -125,6 +141,7 @@ public class Promotions implements Serializable {
             ", createdBy='" + getCreatedBy() + "'" +
             ", createdAt='" + getCreatedAt() + "'" +
             ", updatedAt='" + getUpdatedAt() + "'" +
+            ", status='" + isStatus() + "'" +
             "}";
     }
 }

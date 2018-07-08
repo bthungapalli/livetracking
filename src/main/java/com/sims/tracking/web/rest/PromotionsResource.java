@@ -1,6 +1,7 @@
 package com.sims.tracking.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.sims.tracking.domain.Livetracking;
 import com.sims.tracking.domain.Promotions;
 
 import com.sims.tracking.repository.PromotionsRepository;
@@ -10,6 +11,7 @@ import com.sims.tracking.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -20,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,6 +57,7 @@ public class PromotionsResource {
         if (promotions.getId() != null) {
             throw new BadRequestAlertException("A new promotions cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        promotions.setCreatedAt(Instant.now());
         Promotions result = promotionsRepository.save(promotions);
         return ResponseEntity.created(new URI("/api/promotions/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -75,8 +78,11 @@ public class PromotionsResource {
     public ResponseEntity<Promotions> updatePromotions(@Valid @RequestBody Promotions promotions) throws URISyntaxException {
         log.debug("REST request to update Promotions : {}", promotions);
         if (promotions.getId() == null) {
+        	promotions.setCreatedAt(Instant.now());
+        	promotions.setUpdatedAt(Instant.now());
             return createPromotions(promotions);
         }
+        promotions.setUpdatedAt(Instant.now());
         Promotions result = promotionsRepository.save(promotions);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, promotions.getId().toString()))
@@ -93,7 +99,8 @@ public class PromotionsResource {
     @Timed
     public ResponseEntity<List<Promotions>> getAllPromotions(Pageable pageable) {
         log.debug("REST request to get a page of Promotions");
-        Page<Promotions> page = promotionsRepository.findAll(pageable);
+        Example<Promotions> livepromos = Example.of(new Promotions().status(Boolean.TRUE));
+        Page<Promotions> page = promotionsRepository.findAll(livepromos,pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/promotions");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -113,7 +120,7 @@ public class PromotionsResource {
     }
 
     /**
-     * DELETE  /promotions/:id : delete the "id" promotions.
+     * DELETE  /promotions/:id : delete the "id" of the promotions.
      *
      * @param id the id of the promotions to delete
      * @return the ResponseEntity with status 200 (OK)
