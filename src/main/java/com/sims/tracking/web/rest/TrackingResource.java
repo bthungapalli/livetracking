@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -115,7 +117,8 @@ public class TrackingResource {
     public ResponseEntity<List<Tracking>> getAllCurrentTrackings(Pageable pageable) {
         log.debug("REST request to get a page of Trackings");
         Example<Tracking> isLiveTrackings = Example.of(new Tracking().is_live(Boolean.TRUE));
-        List<Tracking> trackings= trackingRepository.findAll(isLiveTrackings);
+        Sort idSort = new Sort(Direction.DESC,"id");
+        List<Tracking> trackings= trackingRepository.findAll(isLiveTrackings,idSort);
         return new ResponseEntity<>(trackings, HttpStatus.OK);
     }
     

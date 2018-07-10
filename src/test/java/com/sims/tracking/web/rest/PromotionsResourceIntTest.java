@@ -95,7 +95,7 @@ public class PromotionsResourceIntTest {
      */
     public static Promotions createEntity(EntityManager em) {
         Promotions promotions = new Promotions()
-            .promotion(DEFAULT_PROMOTION)
+            .promotion(DEFAULT_PROMOTION)	
             .createdBy(DEFAULT_CREATED_BY)
             .createdAt(DEFAULT_CREATED_AT)
             .updatedAt(DEFAULT_UPDATED_AT)
