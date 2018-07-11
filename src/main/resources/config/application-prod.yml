@@ -16,7 +16,7 @@
 logging:
     level:
         ROOT: INFO
-        com.sims.tracking: INFO
+        com.sims.tracking: DEBUG
         io.github.jhipster: INFO
 
 spring:

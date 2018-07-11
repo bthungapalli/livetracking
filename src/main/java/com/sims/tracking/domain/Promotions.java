@@ -19,6 +19,7 @@ public class Promotions implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable=false)
     private Long id;
 
     @NotNull
@@ -29,7 +30,7 @@ public class Promotions implements Serializable {
     @Column(name = "created_by", nullable = false)
     private String createdBy;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at" , updatable=false)
     private Instant createdAt;
 
     @Column(name = "updated_at")

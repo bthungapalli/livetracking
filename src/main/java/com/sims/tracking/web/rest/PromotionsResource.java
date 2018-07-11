@@ -2,8 +2,9 @@ package com.sims.tracking.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.sims.tracking.domain.Livetracking;
+import com.sims.tracking.domain.PromoAudit;
 import com.sims.tracking.domain.Promotions;
-
+import com.sims.tracking.repository.PromoAuditRepository;
 import com.sims.tracking.repository.PromotionsRepository;
 import com.sims.tracking.web.rest.errors.BadRequestAlertException;
 import com.sims.tracking.web.rest.util.HeaderUtil;
@@ -38,9 +39,12 @@ public class PromotionsResource {
     private static final String ENTITY_NAME = "promotions";
 
     private final PromotionsRepository promotionsRepository;
+    
+    private final PromoAuditRepository promoAuditRepository;
 
-    public PromotionsResource(PromotionsRepository promotionsRepository) {
+    public PromotionsResource(PromotionsRepository promotionsRepository, PromoAuditRepository promoAudtiRepository) {
         this.promotionsRepository = promotionsRepository;
+        this.promoAuditRepository = promoAudtiRepository;
     }
 
     /**
@@ -82,6 +86,11 @@ public class PromotionsResource {
         	promotions.setUpdatedAt(Instant.now());
             return createPromotions(promotions);
         }
+        Promotions currentPromo = promotionsRepository.findOne(promotions.getId());
+        PromoAudit promoAudit = new PromoAudit(currentPromo);
+        promoAudit.setUpdatedValue(promotions.getPromotion());
+        promoAudit.setUpdatedStatus(promotions.isStatus());
+        promoAuditRepository.save(promoAudit);
         promotions.setUpdatedAt(Instant.now());
         Promotions result = promotionsRepository.save(promotions);
         return ResponseEntity.ok()
@@ -99,12 +108,21 @@ public class PromotionsResource {
     @Timed
     public ResponseEntity<List<Promotions>> getAllPromotions(Pageable pageable) {
         log.debug("REST request to get a page of Promotions");
+        Page<Promotions> page = promotionsRepository.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/promotions");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    @GetMapping("/livepromotions")
+    @Timed
+    public ResponseEntity<List<Promotions>> getLivePromotions(Pageable pageable) {
+        log.debug("REST request to get a page of Promotions");
         Example<Promotions> livepromos = Example.of(new Promotions().status(Boolean.TRUE));
         Page<Promotions> page = promotionsRepository.findAll(livepromos,pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/promotions");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
-
+    
     /**
      * GET  /promotions/:id : get the "id" promotions.
      *

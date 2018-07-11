@@ -3,6 +3,7 @@ package com.sims.tracking.web.rest;
 import com.sims.tracking.SimstrackingApp;
 
 import com.sims.tracking.domain.Promotions;
+import com.sims.tracking.repository.PromoAuditRepository;
 import com.sims.tracking.repository.PromotionsRepository;
 import com.sims.tracking.web.rest.errors.ExceptionTranslator;
 
@@ -59,6 +60,9 @@ public class PromotionsResourceIntTest {
 
     @Autowired
     private PromotionsRepository promotionsRepository;
+    
+    @Autowired
+    private PromoAuditRepository promoAuditRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -79,7 +83,7 @@ public class PromotionsResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final PromotionsResource promotionsResource = new PromotionsResource(promotionsRepository);
+        final PromotionsResource promotionsResource = new PromotionsResource(promotionsRepository,promoAuditRepository);
         this.restPromotionsMockMvc = MockMvcBuilders.standaloneSetup(promotionsResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

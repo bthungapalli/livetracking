@@ -49,7 +49,7 @@ public class Tracking implements Serializable {
     @Column(name = "is_live", nullable = false)
     private Boolean is_live;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at" , updatable=false)
     private Instant created_at;
 
     @Column(name = "cname")

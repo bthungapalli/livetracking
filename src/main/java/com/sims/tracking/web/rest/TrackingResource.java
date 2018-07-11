@@ -163,17 +163,15 @@ public class TrackingResource {
     }
     
     
-    @PutMapping("/isLiveFalse")
+    @PutMapping("/isLiveFalse/{requestId}")
     @Timed
-    public ResponseEntity<?> updateIsLiveFalse(@Valid @RequestBody String requestId) throws URISyntaxException {
+    public ResponseEntity<?> updateIsLiveFalse(@PathVariable String requestId) throws URISyntaxException {
         log.debug("REST request to update Tracking : {}", requestId);
         if (requestId == null) {
         	return ResponseEntity.notFound().build();
         }
-        Tracking tracking = trackingRepository.findOne(Example.of(new Tracking().requestId(requestId)));
-        tracking.setIs_live(Boolean.FALSE);
-        trackingRepository.save(tracking);
-        return ResponseEntity.noContent().build();
+        trackingRepository.updateLiveStatus(requestId);
+        return ResponseEntity.ok().build();
     }
     
 }
