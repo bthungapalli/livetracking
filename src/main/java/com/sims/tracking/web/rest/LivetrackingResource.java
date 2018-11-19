@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,15 +52,19 @@ public class LivetrackingResource {
      */
     @PostMapping("/livetrackings")
     @Timed
-    public ResponseEntity<Livetracking> createLivetracking(@Valid @RequestBody Livetracking livetracking) throws URISyntaxException {
+    public ResponseEntity<List<Livetracking>> createLivetracking(@Valid @RequestBody Livetracking livetracking) throws URISyntaxException {
         log.debug("REST request to save Livetracking : {}", livetracking);
         if (livetracking.getId() != null) {
             throw new BadRequestAlertException("A new livetracking cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        livetracking.setCreatedTime(Instant.now());
         Livetracking result = livetrackingRepository.save(livetracking);
+        Example<Livetracking> livetracksByTrackId = Example.of(new Livetracking().trackId(livetracking.getTrackId()));
+        // Sort sort = new Sort(Sort.Direction.DESC , "created_time");
+         List<Livetracking> livetrackings = livetrackingRepository.findAll(livetracksByTrackId);
         return ResponseEntity.created(new URI("/api/livetrackings/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
-            .body(result);
+            .body(livetrackings);
     }
 
     /**
