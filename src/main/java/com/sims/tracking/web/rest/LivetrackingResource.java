@@ -81,7 +81,9 @@ public class LivetrackingResource {
     public ResponseEntity<Livetracking> updateLivetracking(@Valid @RequestBody Livetracking livetracking) throws URISyntaxException {
         log.debug("REST request to update Livetracking : {}", livetracking);
         if (livetracking.getId() == null) {
-            return createLivetracking(livetracking);
+             return ResponseEntity.ok()
+                     .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, livetracking.getId().toString()))
+                     .body( createLivetracking(livetracking).getBody().get(0));
         }
         Livetracking result = livetrackingRepository.save(livetracking);
         return ResponseEntity.ok()
