@@ -2,6 +2,7 @@ package com.sims.tracking.web.rest;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,18 +62,31 @@ public class TrackingResource {
      */
     @PostMapping("/trackings")
     @Timed
-    public ResponseEntity<Tracking> createTracking(@Valid @RequestBody Tracking tracking) throws URISyntaxException {
-        log.debug("REST request to save Tracking : {}", tracking);
-        if (tracking.getId() != null) {
-            throw new BadRequestAlertException("A new tracking cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        Tracking tempTrack = tracking;
-        tempTrack.setIs_live(true);
-        Tracking result = trackingRepository.save(tempTrack);
-        return ResponseEntity.created(new URI("/api/trackings/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
-            .body(result);
-    }
+	public ResponseEntity<Tracking> createTracking(@Valid @RequestBody Tracking tracking) throws URISyntaxException {
+		log.debug("REST request to save Tracking : {}", tracking);
+		if (tracking.getId() != null) {
+			throw new BadRequestAlertException("A new tracking cannot already have an ID", ENTITY_NAME, "idexists");
+		}
+
+		Tracking verifyTracking = new Tracking();
+		verifyTracking.setIs_live(Boolean.TRUE);
+		verifyTracking.setMcoId(verifyTracking.getMcoId());
+		verifyTracking.setRequestId(tracking.getRequestId());
+		Example<Tracking> existingTrackingExample = Example.of(verifyTracking);
+		Tracking existingTracking = trackingRepository.findOne(existingTrackingExample);
+
+		if (existingTracking == null) {
+			Tracking tempTrack = tracking;
+			tempTrack.setIs_live(true);
+			tempTrack.setCreated_at(Instant.now());
+			Tracking result = trackingRepository.save(tempTrack);
+			return ResponseEntity.created(new URI("/api/trackings/" + result.getId()))
+					.headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString())).body(result);
+		}
+		return ResponseEntity.created(new URI("/api/trackings/" + existingTracking.getId()))
+				.headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, existingTracking.getId().toString()))
+				.body(existingTracking);
+	}
 
     /**
      * PUT  /trackings : Updates an existing tracking.
